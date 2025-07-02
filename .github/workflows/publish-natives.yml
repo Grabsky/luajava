@@ -4,12 +4,12 @@ permissions:
 on:
   workflow_dispatch:
   push:
-    branches: [main]
+    branches: [main, compat]
     tags: ["*"]
 
 jobs:
   build-linux-windows:
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-20.04
     env:
       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       GITHUB_ACTOR: ${{ github.actor }}
@@ -34,9 +34,11 @@ jobs:
         run: |
           ./gradlew :luajit:jnigen :luajit:jnigenBuildLinux64 :luajit:jnigenBuildWindows64
           ./gradlew :lua54:jnigen :lua54:jnigenBuildLinux64 :lua54:jnigenBuildWindows64
+          ./gradlew :lua53:jnigen :lua53:jnigenBuildLinux64 :lua53:jnigenBuildWindows64
+          ./gradlew :lua52:jnigen :lua52:jnigenBuildLinux64 :lua52:jnigenBuildWindows64
       - name: Publish to GitHub Packages (GHCR)
         run: |
-          ./gradlew :luajit:publish :lua54:publish --info
+          ./gradlew :luajit:publish :lua54:publish :lua53:publish :lua52:publish --info
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GITHUB_ACTOR: ${{ github.actor }}
